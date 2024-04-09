@@ -1,0 +1,30 @@
+#include <16F877A.h>
+#device adc=10
+#use delay(crystal=20000000)
+
+// Definición de pines
+#define MOTOR_PIN PIN_B0 // Pin de control del motor
+#define DIR_PIN PIN_A0   // Pin de dirección
+#define R2 PIN_A2        // Pin R2
+
+void main() {
+    setup_adc_ports(NO_ANALOGS); // No se utilizan entradas analógicas
+    setup_adc(ADC_OFF);          // Se desactiva el módulo ADC
+    setup_ccp1(CCP_PWM);         // Configura CCP1 como salida PWM
+    setup_timer_2(T2_DIV_BY_16, 255, 1); // Configuración del temporizador 2 para PWM
+
+    set_pwm1_duty(0); // Inicializa el ciclo de trabajo del PWM a 0
+
+    while(1) {
+        if (input(R2) == 1) { // Si R2 = 1 (pin A2 está en alto)
+            // Gira a la derecha
+            output_high(DIR_PIN); // Configura el pin de dirección como alto
+            set_pwm1_duty(127);   // Duty cycle del PWM para girar a la derecha (50%)
+        } else {
+            // Otra acción si R2 != 1
+            // Por ejemplo, mantener el motor quieto
+            output_low(DIR_PIN); // Configura el pin de dirección como bajo
+            set_pwm1_duty(0);    // Duty cycle del PWM como 0 para detener el motor
+        }
+    }
+}
